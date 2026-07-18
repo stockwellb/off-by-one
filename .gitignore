@@ -1,3 +1,11 @@
+.xmake/
+build/
+
+# scratch files written by the exercises at runtime
+*.bin
+*.txt
+!README.txt
+
 # Prerequisites
 *.d
 
