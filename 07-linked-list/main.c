@@ -58,7 +58,7 @@ void list_destroy(Node *head) {
 // owns `data` and must free it.
 Node *list_append(Node *head, void *data) {
   assert(data != NULL);
-  if (head == NULL || data == NULL) {
+  if (head == NULL) {
     return NULL;
   }
   Node *node = malloc(sizeof(Node));
@@ -118,6 +118,9 @@ void list_delete_node(Node **head, Node *target) {
 
 Node *list_append_str(Node *head, const char *str) {
   char *data = make_string(str);
+  if (data == NULL) {
+    return NULL;
+  }
   Node *node = list_append(head, data);
   if (node == NULL) {
     free(data);
@@ -128,6 +131,10 @@ Node *list_append_str(Node *head, const char *str) {
 int main(void) {
 
   void *data = make_string("Head (A)");
+  if (data == NULL) {
+    return EXIT_FAILURE;
+  }
+
   Node *head = list_init(data);
 
   if (head == NULL) {
