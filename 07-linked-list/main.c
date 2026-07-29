@@ -51,14 +51,14 @@ void list_destroy(Node *head) {
     if (current->data != NULL) {
       free(current->data);
     }
+    printf("destroying: %p\n", (void *)current);
     free(current);
-    printf("destroyed: %p\n", (void *)current);
     current = next;
   }
 }
 
 void list_delete_node(Node **head, Node *target) {
-  if (*head == NULL || head == NULL || target == NULL) {
+  if (head == NULL || *head == NULL || target == NULL) {
     return;
   }
 
@@ -72,8 +72,8 @@ void list_delete_node(Node **head, Node *target) {
       free(ref->data);
     }
 
+    printf("deleting: %p\n", (void *)ref);
     free(ref);
-    printf("deleted: %p\n", (void *)ref);
     return;
   }
 
@@ -91,8 +91,8 @@ void list_delete_node(Node **head, Node *target) {
     free(target->data);
   }
 
+  printf("deleting: %p\n", (void *)target);
   free(target);
-  printf("deleted: %p\n", (void *)target);
 }
 
 int main(void) {
