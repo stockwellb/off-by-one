@@ -1,10 +1,27 @@
+#include <stddef.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 
 typedef struct Node {
   struct Node *next;
   void *data;
 } Node;
+
+void *make_string(const char *src) {
+  if (src == NULL) {
+    return NULL;
+  }
+
+  size_t len = strlen(src) + 1;
+  char *dest = malloc(len);
+
+  if (dest != NULL) {
+    memcpy(dest, src, len);
+  }
+
+  return dest;
+}
 
 Node *list_init(void) {
   Node *e = malloc(sizeof(Node));
@@ -17,11 +34,11 @@ Node *list_init(void) {
     return NULL;
   }
 
-  *e = (Node){.next = NULL, .data = NULL};
-  *d = (Node){.next = e, .data = NULL};
-  *c = (Node){.next = d, .data = NULL};
-  *b = (Node){.next = c, .data = NULL};
-  *a = (Node){.next = b, .data = NULL};
+  *e = (Node){.next = NULL, .data = make_string("Node E")};
+  *d = (Node){.next = e, .data = make_string("Node D")};
+  *c = (Node){.next = d, .data = make_string("Node C")};
+  *b = (Node){.next = c, .data = make_string("Node B")};
+  *a = (Node){.next = b, .data = make_string("Node A ")};
 
   return a;
 }
@@ -31,6 +48,9 @@ void list_destroy(Node *head) {
 
   while (current != NULL) {
     Node *next = current->next;
+    if (current->data != NULL) {
+      free(current->data);
+    }
     free(current);
     printf("destroyed: %p\n", (void *)current);
     current = next;
@@ -47,6 +67,11 @@ void list_delete_node(Node **head, Node *target) {
   // delete the head;
   if (ref == target) {
     *head = ref->next;
+
+    if (ref->data != NULL) {
+      free(ref->data);
+    }
+
     free(ref);
     printf("deleted: %p\n", (void *)ref);
     return;
@@ -62,6 +87,10 @@ void list_delete_node(Node **head, Node *target) {
 
   ref->next = target->next;
 
+  if (target->data != NULL) {
+    free(target->data);
+  }
+
   free(target);
   printf("deleted: %p\n", (void *)target);
 }
@@ -71,7 +100,7 @@ int main(void) {
   Node *current = head;
 
   while (current != NULL) {
-    printf("address: %p\n", (void *)current);
+    printf("address: %p, data:%s\n", (void *)current, (char *)current->data);
     current = current->next;
   }
 
