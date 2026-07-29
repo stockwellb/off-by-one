@@ -23,24 +23,19 @@ void *make_string(const char *src) {
   return dest;
 }
 
-Node *list_init(void) {
-  Node *e = malloc(sizeof(Node));
-  Node *d = malloc(sizeof(Node));
-  Node *c = malloc(sizeof(Node));
-  Node *b = malloc(sizeof(Node));
-  Node *a = malloc(sizeof(Node));
+// Takes ownership of `data` only on success; on failure the caller still
+// owns `data` and must free it.
+Node *list_init(void *data) {
+  Node *node = malloc(sizeof(Node));
 
-  if (!a || !b || !c || !d || !e) {
+  if (node == NULL) {
     return NULL;
   }
 
-  *e = (Node){.next = NULL, .data = make_string("Node E")};
-  *d = (Node){.next = e, .data = make_string("Node D")};
-  *c = (Node){.next = d, .data = make_string("Node C")};
-  *b = (Node){.next = c, .data = make_string("Node B")};
-  *a = (Node){.next = b, .data = make_string("Node A ")};
+  node->data = data;
+  node->next = NULL;
 
-  return a;
+  return node;
 }
 
 void list_destroy(Node *head) {
@@ -55,6 +50,29 @@ void list_destroy(Node *head) {
     free(current);
     current = next;
   }
+}
+
+// Takes ownership of `data` only on success; on failure the caller still
+// owns `data` and must free it.
+Node *list_append(Node *head, void *data) {
+  if (head == NULL || data == NULL) {
+    return NULL;
+  }
+  Node *node = malloc(sizeof(Node));
+  if (node == NULL) {
+    return NULL;
+  }
+  node->next = NULL;
+  node->data = data;
+
+  Node *current = head;
+
+  while (current->next != NULL) {
+    current = current->next;
+  }
+
+  current->next = node;
+  return node;
 }
 
 void list_delete_node(Node **head, Node *target) {
@@ -95,8 +113,31 @@ void list_delete_node(Node **head, Node *target) {
   free(target);
 }
 
+Node *list_append_str(Node *head, const char *str) {
+  char *data = make_string(str);
+  Node *node = list_append(head, data);
+  if (node == NULL) {
+    free(data);
+  }
+  return node;
+}
+
 int main(void) {
-  Node *head = list_init();
+
+  void *data = make_string("Head (A)");
+  Node *head = list_init(data);
+
+  if (head == NULL) {
+    free(data);
+    return EXIT_FAILURE;
+  }
+
+  list_append_str(head, "Node B");
+  list_append_str(head, "Node C");
+  list_append_str(head, "Node D");
+  list_append_str(head, "Node E");
+  list_append_str(head, "Node F");
+
   Node *current = head;
 
   while (current != NULL) {
@@ -109,4 +150,6 @@ int main(void) {
 
   list_destroy(head);
   printf("Done!\n");
+
+  return EXIT_SUCCESS;
 }
