@@ -1,3 +1,4 @@
+#include <assert.h>
 #include <stddef.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -26,6 +27,7 @@ void *make_string(const char *src) {
 // Takes ownership of `data` only on success; on failure the caller still
 // owns `data` and must free it.
 Node *list_init(void *data) {
+  assert(data != NULL);
   Node *node = malloc(sizeof(Node));
 
   if (node == NULL) {
@@ -55,6 +57,7 @@ void list_destroy(Node *head) {
 // Takes ownership of `data` only on success; on failure the caller still
 // owns `data` and must free it.
 Node *list_append(Node *head, void *data) {
+  assert(data != NULL);
   if (head == NULL || data == NULL) {
     return NULL;
   }
