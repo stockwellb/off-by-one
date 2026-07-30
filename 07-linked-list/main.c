@@ -20,16 +20,15 @@ void *make_string(const char *src) {
   return dest;
 }
 
-Node *list_append_str(Node *head, const char *str) {
+void list_append_str(Node *head, const char *str) {
   char *data = make_string(str);
   if (data == NULL) {
-    return NULL;
+    return;
   }
-  Node *node = list_append(head, data);
-  if (node == NULL) {
+  if (list_append(head, data) == false) {
     free(data);
   }
-  return node;
+  return;
 }
 
 int main(void) {
@@ -52,17 +51,12 @@ int main(void) {
   list_append_str(head, "Node E");
   list_append_str(head, "Node F");
 
-  Node *current = head;
-
-  while (current != NULL) {
-    printf("address: %p, data:%s\n", (void *)current, (char *)current->data);
-    current = current->next;
-  }
-
-  Node *target = head->next->next->next;
-  list_delete_node(&head, target);
+  list_print(head);
+  list_delete_at(&head, 3);
+  list_print(head);
 
   list_destroy(head);
+
   printf("Done!\n");
 
   return EXIT_SUCCESS;

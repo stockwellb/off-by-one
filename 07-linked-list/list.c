@@ -5,18 +5,27 @@
 #include <stdlib.h>
 #include <string.h>
 
-Node *list_init(void *data) {
-  assert(data != NULL);
-  Node *node = malloc(sizeof(Node));
+static void free_node(Node *node) {
+  free(node->data);
+  free(node);
+}
 
+static Node *create_node(void *data) {
+  Node *node = malloc(sizeof(Node));
   if (node == NULL) {
     return NULL;
   }
 
-  node->data = data;
   node->next = NULL;
-
+  node->data = data;
   return node;
+}
+
+// Takes ownership of `data` only on success; on failure the caller still
+// owns `data` and must free it.
+Node *list_init(void *data) {
+  assert(data != NULL);
+  return create_node(data);
 }
 
 void list_destroy(Node *head) {
@@ -24,26 +33,22 @@ void list_destroy(Node *head) {
 
   while (current != NULL) {
     Node *next = current->next;
-    if (current->data != NULL) {
-      free(current->data);
-    }
-    printf("destroying: %p\n", (void *)current);
-    free(current);
+    free_node(current);
     current = next;
   }
 }
 
-Node *list_append(Node *head, void *data) {
+// Takes ownership of `data` only on success; on failure the caller still
+// owns `data` and must free it.
+bool list_append(Node *head, void *data) {
   assert(data != NULL);
   if (head == NULL) {
-    return NULL;
+    return false;
   }
-  Node *node = malloc(sizeof(Node));
+  Node *node = create_node(data);
   if (node == NULL) {
-    return NULL;
+    return false;
   }
-  node->next = NULL;
-  node->data = data;
 
   Node *current = head;
 
@@ -52,43 +57,32 @@ Node *list_append(Node *head, void *data) {
   }
 
   current->next = node;
-  return node;
+  return true;
 }
 
-void list_delete_node(Node **head, Node *target) {
-  if (head == NULL || *head == NULL || target == NULL) {
+void list_delete_at(Node **head, size_t index) {
+  if (head == NULL)
     return;
+
+  Node **link = head; // the pointer that points AT the current node
+  for (size_t i = 0; i < index; i++) {
+    if (*link == NULL)
+      return; // index past the end
+    link = &(*link)->next;
   }
+  if (*link == NULL)
+    return; // index == length
 
-  Node *ref = *head;
+  Node *victim = *link;
+  *link = victim->next;
+  free_node(victim);
+}
 
-  // delete the head;
-  if (ref == target) {
-    *head = ref->next;
+void list_print(Node *head) {
+  Node *current = head;
 
-    if (ref->data != NULL) {
-      free(ref->data);
-    }
-
-    printf("deleting: %p\n", (void *)ref);
-    free(ref);
-    return;
+  while (current != NULL) {
+    printf("address: %p, data:%s\n", (void *)current, (char *)current->data);
+    current = current->next;
   }
-
-  while (ref != NULL && ref->next != target) {
-    ref = ref->next;
-  }
-
-  if (ref == NULL) {
-    return;
-  }
-
-  ref->next = target->next;
-
-  if (target->data != NULL) {
-    free(target->data);
-  }
-
-  printf("deleting: %p\n", (void *)target);
-  free(target);
 }
