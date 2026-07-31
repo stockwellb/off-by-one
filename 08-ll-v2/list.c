@@ -73,6 +73,7 @@ List *list_create(void) {
 
   return list;
 }
+
 void list_destroy(List *list) {
   if (list == NULL) {
     return;
@@ -86,6 +87,7 @@ void list_destroy(List *list) {
   }
   free(list);
 }
+
 bool list_push(List *list, void *data) {
   // create a new node;
   Node *node = create_node(data);
@@ -105,15 +107,19 @@ bool list_push(List *list, void *data) {
   // track the new length;
   list->len++;
   return true;
-};
+}
 
 void *list_get_at(const List *list, size_t index) {
   if (list->head == NULL) {
     return NULL;
   }
+
+  if (index >= list->len) {
+    return NULL;
+  }
   const Node *node = node_ref_at(list->head, index);
   return node->data;
-};
+}
 
 void *list_remove_at(List *list, size_t index);
 void list_delete_at(List *list, size_t index);
