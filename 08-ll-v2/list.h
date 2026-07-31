@@ -53,8 +53,8 @@ Node **list_end(Node **head);
 
 /* Allocation. The four functions above never call these. Nodes come
    in from the caller and go out to the caller. */
-Node *create_node(void *data); /* NULL on allocation failure */
+Node *list_create_node(void *data); /* NULL on allocation failure */
 
-void free_node(Node *node); /* safe on NULL */
+void list_free_node(Node *node); /* safe on NULL */
 
 #endif // LIST_H

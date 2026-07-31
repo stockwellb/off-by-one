@@ -40,7 +40,7 @@ Node **list_at(Node **head, size_t index) {
   return link;
 }
 
-Node *node_create(void *data) {
+Node *list_node_create(void *data) {
   Node *node = malloc(sizeof(Node));
   if (node == NULL) {
     return NULL;
@@ -50,6 +50,6 @@ Node *node_create(void *data) {
   return node;
 }
 
-void node_free(Node *node) {
+void list_node_free(Node *node) {
   free(node); // free(NULL) is a no-op, so this is safe
 }
