@@ -1,6 +1,9 @@
 .xmake/
 build/
 
+# macOS
+.DS_Store
+
 # scratch files written by the exercises at runtime
 *.bin
 *.txt

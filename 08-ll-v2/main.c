@@ -4,26 +4,21 @@
 
 int main(void) {
   int data[5] = {10, 11, 12, 13, 14};
-  Node *head = NULL;
+  int data_len = sizeof(data) / sizeof(int);
 
-  Node *alpha = list_node_create(&data[0]);
-  Node *beta = list_node_create(&data[1]);
-  Node *charlie = list_node_create(&data[2]);
-  Node *delta = list_node_create(&data[3]);
-  Node *echo = list_node_create(&data[4]);
+  List *list = list_create();
 
-  list_splice(&head, alpha);
-  list_splice(list_end(&head), beta);
-  list_splice(list_end(&head), charlie);
-  list_splice(list_end(&head), delta);
-  list_splice(list_end(&head), echo);
+  for (int i = 0; i < data_len; i++) {
 
-  printf("List len: %ld\n", list_len(head));
+    list_push(list, &data[i]);
+  }
 
-  Node **selected_alpha = list_at(&head, 0);
-  Node **selected_echo = list_at(&head, 4);
+  printf("List len: %ld\n", list_len(list));
 
-  printf("Alpha data: %d\n", *(int *)(*selected_alpha)->data);
-  printf("Echo  data: %d\n", *(int *)(*selected_echo)->data);
+  int *value_one = (int *)list_get_at(list, 0);
+  int *value_four = (int *)list_get_at(list, 4);
+
+  printf("item one : %d\n", *value_one);
+  printf("item four: %d\n", *value_four);
   return EXIT_SUCCESS;
 }
