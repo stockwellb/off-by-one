@@ -39,6 +39,12 @@ Node **list_at(Node **head, size_t index) {
   }
   return link;
 }
+size_t list_len(const Node *head) {
+  size_t count = 0;
+  for (const Node *cur = head; cur != NULL; cur = cur->next)
+    count++;
+  return count;
+}
 
 Node *list_node_create(void *data) {
   Node *node = malloc(sizeof(Node));

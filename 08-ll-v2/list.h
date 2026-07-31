@@ -10,9 +10,9 @@
  * constructor and nothing to free:
  *
  *     Node *head = NULL;                              // valid empty list
- *     list_splice(&head, create_node(x));             // prepend
- *     list_splice(list_end(&head), create_node(y));   // append
- *     free_node(list_unsplice(list_at(&head, 2)));    // delete index 2
+ *     list_splice(&head, list_node_create(x));           // prepend
+ *     list_splice(list_end(&head), list_node_create(y)); // append
+ *     list_node_free(list_unsplice(list_at(&head, 2)));  // delete index 2
  *
  * A `Node **` is a *link*: the address of the pointer that points at a
  * node. That is either &head or &some_node->next. Because those are the
@@ -21,7 +21,7 @@
  * The finders locate a link; the splicers mutate one. Neither allocates.
  *
  * Ownership:
- *   Nodes  -- caller allocates (create_node) and frees (free_node).
+ *   Nodes  -- caller allocates (list_node_create) and frees (list_node_free).
  *             list_unsplice detaches a node but does not free it.
  *   data   -- borrowed. The list never reads, copies, or frees it.
  *             It must outlive the node holding it.
@@ -51,10 +51,12 @@ Node **list_at(Node **head, size_t index);
 /* Link at the end of the list -- always valid, holds NULL. O(n). */
 Node **list_end(Node **head);
 
-/* Allocation. The four functions above never call these. Nodes come
-   in from the caller and go out to the caller. */
-Node *list_create_node(void *data); /* NULL on allocation failure */
+size_t list_len(const Node *head);
 
-void list_free_node(Node *node); /* safe on NULL */
+/* Allocation. The functions above never call these. Nodes come
+   in from the caller and go out to the caller. */
+Node *list_node_create(void *data); /* NULL on allocation failure */
+
+void list_node_free(Node *node); /* safe on NULL */
 
 #endif // LIST_H
