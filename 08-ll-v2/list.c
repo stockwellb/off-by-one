@@ -14,6 +14,11 @@ struct List {
   size_t len;
 };
 
+static Node *container_of(Node **link) {
+  assert(link != NULL);
+  return (Node *)((char *)link - offsetof(Node, next));
+}
+
 static Node *unsplice(Node **link) {
   assert(link != NULL);
   Node *node = *link;
@@ -110,10 +115,6 @@ bool list_push(List *list, void *data) {
 }
 
 void *list_get_at(const List *list, size_t index) {
-  if (list->head == NULL) {
-    return NULL;
-  }
-
   if (index >= list->len) {
     return NULL;
   }
@@ -121,7 +122,30 @@ void *list_get_at(const List *list, size_t index) {
   return node->data;
 }
 
-void *list_remove_at(List *list, size_t index);
-void list_delete_at(List *list, size_t index);
+void *list_remove_at(List *list, size_t index) {
+  if (index >= list->len) {
+    return NULL;
+  }
+
+  Node **link = node_at(&list->head, index);
+  Node *node = unsplice(link);
+  void *data = node->data;
+
+  // potential tail clean up
+  if (node == list->tail) {
+    if (link == &list->head) {
+      list->tail = NULL;
+    } else {
+      list->tail = container_of(link);
+    }
+  }
+
+  free_node(node);
+  list->len--;
+  return data;
+}
+void list_delete_at(List *list, size_t index) {
+  (void)list_remove_at(list, index);
+}
 
 size_t list_len(const List *list) { return list->len; }
